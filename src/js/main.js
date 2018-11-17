@@ -76,7 +76,7 @@ class Qiupalong {
             const el = document.createElement("div");
             el.className = "season-item";
 
-            var template = `<h3 class="season-title">${year} — ${name}</h3>
+            const template = `<h3 class="season-title">${year} — ${name}</h3>
                 <table class="season-details hidden">
                     <thead>
                         <tr>
@@ -89,12 +89,23 @@ class Qiupalong {
 
             el.innerHTML = template;
             list.appendChild(el);
-            el.querySelector(".season-title").onclick = () => this.fetchSeasonDetails(year, el);
-
+            el.querySelector(".season-title").onclick = () => this.toggleSeasonDetails(year, el);
         }
 
         loader.classList.add("hidden");
         wrapper.classList.remove("hidden");
+    };
+
+    toggleSeasonDetails(year, element) {
+        const wrapper = element.querySelector(".season-details");
+
+        if(wrapper.classList.contains("hidden")) {
+            this.fetchSeasonDetails(year, element);
+        }
+        else {
+            // Details have been already open, so we toggle them off
+            wrapper.classList.add("hidden");
+        }
     };
 
     fetchSeasonDetails(year, element) {
@@ -108,16 +119,9 @@ class Qiupalong {
     };
 
     handleDetailsRequest(data, element) {
-        const wrapper = element.querySelector(".season-details");
-
-        if(!wrapper.classList.contains("hidden")) {
-            // Details have been already open, so we toggle them off
-            wrapper.classList.add("hidden");
-            return false;
-        }
-
         // Render season races details
         const races = data.MRData.RaceTable.Races;
+        const wrapper = element.querySelector(".season-details");
         const container = wrapper.querySelector(".season-details-content");
         let template = "";
 
@@ -180,7 +184,7 @@ class Qiupalong {
             }
         });
     };
-};
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const qiupalong = new Qiupalong(2005, 2015);
